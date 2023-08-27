@@ -39,11 +39,10 @@ class ActionCog(commands.Cog):
 
         if message_instance is not None:
             author = f"<@{message.author.id}>" if not await self.client.database.anonimity_check(message.author.id) else "Anonymous"
-            webhook = await message.channel.webhooks()
-            if len(webhook) == 0:
-                await message.channel.create_webhook(name="Characters Webhook")
-            else:
-                webhook = webhook[0]
+            webhooks = await message.channel.webhooks()
+            webhook = discord.utils.find(lambda webhook: webhook.token is not None, webhooks)
+            if webhook is None:
+                webhook = await message.channel.create_webhook(name="Characters Webhook")
 
             for i in message_instance:
                 in_db = True
