@@ -10,7 +10,7 @@ class Database:
     async def connect(self, connection_uri: str, /) -> None:
         self.dev_client = motor.motor_asyncio.AsyncIOMotorClient(connection_uri)
         if self.dev_client is not None:
-            self.db = self.dev_client['rpu_database_alpha']
+            self.db = self.dev_client['rpu_database_beta']
             print("Database connected!")
         else:
             self.db = None
