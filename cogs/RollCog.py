@@ -272,7 +272,7 @@ class RollCog(commands.Cog):
                     elif i == 5 or i == 6:
                         result.append("+")
                     else:
-                        result.append("0")
+                        result.append(0)
             elif pivot[1] == "c" or pivot[1] == "C":
                 pivot2 = [random.randint(0, 1) for _ in range(int(pivot[0]))]
                 for i in pivot2:
@@ -288,9 +288,9 @@ class RollCog(commands.Cog):
         
         if result:
             for x in result:
-                if x == "+":
+                if x is "+":
                     total = total+1
-                elif x == "-":
+                elif x is "-":
                     total = total-1
                 elif x == "Heads" or x == "Tails":
                     total = total
