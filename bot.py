@@ -5,6 +5,7 @@ import asyncio
 from discord.ext import commands
 import os
 from rpu_database import Database
+from help import Help
 
 
 bot_status = ["initializing", "active", "shutting down"]
@@ -21,29 +22,22 @@ class Bot(commands.Bot):
             case_insensitive=True,
         )
         self.database = Database()
+        self.help_command = commands.MinimalHelpCommand()
         print("Bot Connected!")
 
     async def setup_hook(self) -> None:
         await self.database.connect("mongodb://localhost:27017")
-        self.db_loop = self.database.dev_client.get_io_loop()
         for extension in EXTENSIONS:
             await self.load_extension(extension)
         await self.add_cog(PrefixCog(self))
         for filename in os.listdir("./cogs"):
             if filename.endswith(".py"):
                 await self.load_extension(f"cogs.{filename[:-3]}")
-        guild = discord.Object(1135999359985647706)
-        # tree = self.tree
-        # tree.clear_commands(guild=guild)
-        # await tree.sync(guild=guild)
-        # tree.clear_commands(guild=guild)
-        # await tree.sync()
         await self.tree.sync()
-        # print(self.tree.get_command('character').get_command('default').get_command('image_set').binding)
 
-    async def close(self) -> None:
-        await super().close()
-        await self.database.close()
+    # async def close(self) -> None:
+    #     await super().close()
+    #     await self.database.close()
 
 async def prefix_setup(bot, message):
         prefix = await bot.database.get_prefix(guild_id=message.guild.id)
@@ -70,4 +64,7 @@ class PrefixCog(commands.Cog):
         await self.bot.database.remove_prefix(guild_id=ctx.guild.id)
         await ctx.send(f"The prefix has been reset to `{DEFAULT_PREFIX}`.")
 
-Bot().run(bot_token.return_token())
+bot = Bot()
+
+def run_bot():
+    bot.run(bot_token.return_token())

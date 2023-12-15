@@ -4,6 +4,7 @@ from discord.ext import commands
 import random
 from sympy import *
 import re
+from help import Help
 
 class RollCog(commands.Cog):
     def __init__(self, client):
@@ -13,8 +14,8 @@ class RollCog(commands.Cog):
     async def on_ready(self):
         print("Roll.py is ready")
 
-    @commands.command(aliases = ['r', 'diceroll', 'dice_roll', 'dice'])
-    async def roll(self, ctx, args):
+    @commands.command(aliases = ['r', 'diceroll', 'dice_roll', 'dice'], help="roll")
+    async def roll(self, ctx, args: str):
         #define boolean see if the code will work or not
         not_failure = True
         #start to make the roll
@@ -26,7 +27,7 @@ class RollCog(commands.Cog):
         #function to detect the interaction through numbers and
         #which numbers will interact with the operator
         for indz in args:
-            if indz == "+" or indz == "-" or indz == "*" or indz == "/" or indz == "(" or indz == ")" or indz == "[" or indz == "]":
+            if indz in ("+", "-", "*", "/", "(", ")", "[", "]"):
                 indice.append(indz)
 
         #gather dice roll and numbers to calculate, sotring them into args_result, being args result the raw input
@@ -122,12 +123,16 @@ class RollCog(commands.Cog):
             
             await ctx.send(embed=embed)
 
+
         if not resp_total:
             resp_total = "Error! Invalid arguments"
 
             await ctx.send(resp_total)
 
-    @app_commands.command(name="roll")
+    @app_commands.command(name="roll", description="roll 1 or more dices of any sides, can use DnD arguments")
+    @app_commands.describe(
+        args="set the arguments of dice roll, like 1d20+5"
+    )
     async def roll(self, interaction: discord.Interaction, args: str):
         #define boolean see if the code will work or not
         not_failure = True
@@ -235,6 +240,7 @@ class RollCog(commands.Cog):
             )
             
             await interaction.response.send_message(embed=embed)
+            
 
     def calculate(self, indice, store):
         sub_total = 0
@@ -288,9 +294,9 @@ class RollCog(commands.Cog):
         
         if result:
             for x in result:
-                if x is "+":
+                if x == "+":
                     total = total+1
-                elif x is "-":
+                elif x == "-":
                     total = total-1
                 elif x == "Heads" or x == "Tails":
                     total = total
